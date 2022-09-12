@@ -2,7 +2,7 @@
 
 from flask import Flask, request, redirect, render_template, flash
 # from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 from datetime import datetime
 
 app = Flask(__name__)
@@ -162,3 +162,27 @@ def delete_post(post_id):
 
     flash(f"{post.title} has been successfully deleted!")
     return redirect(f'/users/{post.user_id}')
+
+@app.route("/tags")
+def list_tags():
+    """Lists all tags, with links to the tag detail page."""
+
+@app.route("/tags/<int:tag-id>")
+def show_tag_details():
+    """Show detail about a tag. Have links to edit form and to delete."""
+
+@app.route("/tags/new", methods=['GET', 'POST'])
+def new_tag():
+    """on GET - Shows a form to add a new tag.
+    on POST - Process add form, adds tag, and redirect to tag list.
+    """
+
+@app.route("/tags/<int:tag-id>/edit", methods=['GET', 'POST'])
+def edit_tag():
+    """on GET - Show edit form for a tag.
+    on POST - Process edit form, edit tag, and redirects to the tags list.
+    """
+
+@app.route("/tags/<int:tag-id>/delete", methods=['POST'])
+def delete_tag():
+    """delete a tag"""
