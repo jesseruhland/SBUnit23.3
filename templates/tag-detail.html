@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+<!--  -->
+{% block title %}{{tag.name}}{% endblock %}
+<!--  -->
+{% block main_content %}
+<div class="container">
+  <h1>{{tag.name}}</h1>
+  {% for msg in get_flashed_messages() %}
+  <p class="flash-message">{{ msg }}</p>
+  {% endfor %}
+  <h3>Posts</h3>
+  <ul>
+    {% for post in tag.posts %}
+    <li>
+      <a href="/posts/{{post.id}}">{{post.title}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="btn-group" role="group">
+    <form action="/tags/{{tag.id}}/edit" method="GET">
+      <button class="btn btn-primary mx-1">Edit</button>
+    </form>
+    <form action="/tags/{{tag.id}}/delete" method="POST">
+      <button class="btn btn-danger mx-1">Delete</button>
+    </form>
+  </div>
+
+  <br />
+  <a href="/"><button class="btn btn-dark mt-5">Return to Home</button></a>
+</div>
+{% endblock %}

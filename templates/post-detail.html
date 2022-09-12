@@ -6,7 +6,28 @@
 <div class="container">
   <h1>{{post.title}}</h1>
   <p>{{post.content}}</p>
-  <div class="btn-group" role="group">
+  <small
+    >Posted by {{post.users.first_name}} {{post.users.last_name}} on
+    {{post.date_stamp()}}</small
+  >
+  <br />
+  <small
+    >Tags: {% for tag in post.tags %}
+    <a href="/tags/{{tag.id}}"
+      ><button
+        class="btn btn-primary"
+        style="
+          --bs-btn-padding-y: 0.15rem;
+          --bs-btn-padding-x: 0.15rem;
+          --bs-btn-font-size: 0.5rem;
+        "
+      >
+        {{tag.name}}
+      </button></a
+    >
+    {% endfor %}</small
+  ><br />
+  <div class="btn-group mt-3" role="group">
     <form action="/users/{{post.user_id}}">
       <button class="btn btn-light me-1">
         Back to {{post.users.first_name}} {{post.users.last_name}}

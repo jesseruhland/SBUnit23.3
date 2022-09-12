@@ -9,8 +9,31 @@
     <label for="title">Title</label><br />
     <input type="text" name="title" required value="{{post.title}}" /><br />
     <label for="content">Content</label><br />
-    <textarea type="text" name="content" rows="4">{{post.content}}</textarea
-    ><br />
+    <textarea type="text" name="content" rows="4">{{post.content}}</textarea>
+    <h4>Post Tags:</h4>
+    {% for tag in tags %} {% if tag in post.tags %}
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        name="tags"
+        value="{{tag.id}}"
+        checked
+      />
+      <label class="form-check-label">{{tag.name}}</label>
+    </div>
+    {% else %}
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        name="tags"
+        value="{{tag.id}}"
+      />
+      <label class="form-check-label">{{tag.name}}</label>
+    </div>
+    {% endif %} {% endfor %}
+    <br />
     <button class="btn btn-success mt-2">Save</button>
   </form>
   <form action="/posts/{{post.id}}">

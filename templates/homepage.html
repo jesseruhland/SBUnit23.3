@@ -13,9 +13,26 @@
   <small
     >Posted by {{post.users.first_name}} {{post.users.last_name}} on
     {{post.date_stamp()}}</small
+  ><br />
+  <small
+    >Tags: {% for tag in post.tags %}
+    <a href="/tags/{{tag.id}}"
+      ><button
+        class="btn btn-primary"
+        style="
+          --bs-btn-padding-y: 0.15rem;
+          --bs-btn-padding-x: 0.15rem;
+          --bs-btn-font-size: 0.5rem;
+        "
+      >
+        {{tag.name}}
+      </button></a
+    >
+    {% endfor %}</small
   >
   <hr />
   {% endfor %}
   <a href="/users"><button class="btn btn-primary">View Users</button></a>
+  <a href="/tags"><button class="btn btn-primary">View Tags</button></a>
 </div>
 {% endblock %}

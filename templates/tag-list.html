@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+<!--  -->
+{% block title %}Tag List{% endblock %}
+<!--  -->
+{% block main_content %}
+<div class="container">
+  <h1>Tags</h1>
+  {% for msg in get_flashed_messages() %}
+  <p class="flash-message">{{ msg }}</p>
+  {% endfor %}
+  <ul>
+    {% for tag in tags %}
+    <li>
+      <a href="/tags/{{tag.id}}">{{tag.name}}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <a href="/tags/new"><button class="btn btn-primary">Add Tag</button></a>
+  <a href="/"><button class="btn btn-dark">Return to Home</button></a>
+</div>
+{% endblock %}

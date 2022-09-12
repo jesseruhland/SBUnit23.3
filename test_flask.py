@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User, Post
+from models import db, User, Post, Tag, PostTag
 
 # Use test database and don't clutter tests with SQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -32,13 +32,27 @@ class ViewsTestCase(TestCase):
         db.session.add(test_post)
         db.session.commit()
 
+        test_tag = Tag(name='TestTag')
+        db.session.add(test_tag)
+        db.session.commit()
+
+        test_post_tag = PostTag(post_id=test_post.id, tag_id=test_tag.id)
+        db.session.add(test_post_tag)
+        db.session.commit()
+
         self.user_id = test_user.id
         self.post_id = test_post.id
+        self.tag_id = test_tag.id
 
     def tearDown(self):
         """Clean up any fouled transactions"""
 
         db.session.rollback()
+        User.query.delete()
+        Post.query.delete()
+        Tag.query.delete()
+        PostTag.query.delete()
+        db.session.commit()
 
     # def test_root_route(self):
     #     """test redirect set up per assignment requirements"""
@@ -132,6 +146,7 @@ class ViewsTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1>Post for Testing With</h1>', html)
+            self.assertIn('TestTag', html)
 
     def test_edit_post_form(self):
         with app.test_client() as client:
@@ -157,4 +172,64 @@ class ViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("Post for Testing With has been successfully deleted!", html)       
+            self.assertIn("Post for Testing With has been successfully deleted!", html)
+
+    def test_tag_list(self):
+        with app.test_client() as client:
+            resp = client.get('/tags')
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("TestTag", html)
+
+    def test_tag_details(self):
+        with app.test_client() as client:
+            resp = client.get(f"/tags/{self.tag_id}")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>TestTag</h1>', html)
+            self.assertIn('Post for Testing With', html)
+
+    def test_new_tag_form(self):
+        with app.test_client() as client:
+            resp = client.get(f'/tags/new')
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Create A Tag</h1>', html)
+
+    def test_new_tag_submission(self):
+        with app.test_client() as client:
+            d = {"name": "Tag2"}
+            resp = client.post(f'/tags/new', data=d, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Tag2 has been added successfully!", html)
+
+    def test_edit_tag_form(self):
+        with app.test_client() as client:
+            resp = client.get(f'/tags/{self.tag_id}/edit')
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Edit A Tag</h1>', html)
+            self.assertIn('<button class="btn btn-success mt-2">Save</button>', html)
+
+    def test_edit_tag_submission(self):
+        with app.test_client() as client:
+            d = {"name": "UpdatedTag"}
+            resp = client.post(f"/tags/{self.tag_id}/edit", data=d, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("UpdatedTag has been successfully updated!", html)
+
+    def test_delete_tag(self):
+        with app.test_client() as client:
+            resp = client.post(f"/tags/{self.tag_id}/delete", follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("TestTag has been successfully deleted!", html)
